@@ -1,0 +1,33 @@
+# Python Virtual Environment
+venv/
+*.pyc
+__pycache__/
+
+# Environment variables (sensitive information)
+.env
+
+# Node.js modules
+node_modules/
+dist/
+build/
+
+# OS generated files
+.DS_Store
+.env.*local
+.idea/ # For PyCharm/IntelliJ users
+.vscode/ # For VS Code users
+
+# Flask-specific ignores
+instance/
+.flaskenv
+
+# Database file (for SQLite)
+*.db
+*.sqlite3
+
+# Uploads (if you have an uploads folder)
+uploads/
+
+# Log files
+*.log
+#aded
