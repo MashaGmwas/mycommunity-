@@ -12,23 +12,32 @@ from Routes.clubs import clubs_bp
 from werkzeug.utils import secure_filename 
 from models.club import Club 
 from models.user import User 
+from Routes.societies import societies_bp
+from models.society import Society 
 from flask_migrate import Migrate
- 
 
 CONFIG_MAP = {
     'development': DevelopmentConfig,
     'testing': TestingConfig,
     'production': ProductionConfig,
 }
+def allowed_file(filename, app_config):
+    return '.' in filename and \
+         filename.rsplit('.', 1)[1].lower()in app_config['ALLOWED_EXTENSIONS']
 
 def create_app(config_name='development'):
     app = Flask(__name__)
     load_dotenv() 
-    
+    UPLOAD_FOLDER = os.path.join(app.root_path, 'uploads')
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+    app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+    app.config['ALLOWED_EXTENSIONS'] = {'PNG','JPG','jpeg','gif'}
+     
     config_class = CONFIG_MAP.get(config_name, DevelopmentConfig)
     app.config.from_object(config_class)
 
-    
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('SQLALCHEMY_DATABASE_URI')
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
@@ -48,24 +57,16 @@ def create_app(config_name='development'):
     
     CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
 
-    
     from Routes.clubs import clubs_bp
     app.register_blueprint(clubs_bp, url_prefix='/api/clubs')
+    
+    from Routes.clubs import createclub_bp
+    app.register_blueprint(createclub_bp, url_prefix='/api/clubs/createclub')
+
+    from Routes.societies import societies_bp
+    app.register_blueprint( societies_bp, url_prefix='/api/societies')
 
     
-        #db.create_all()
-
-    
-       #
-        #if Club.query.count() == 0:
-        #    print("Adding initial club data...")
-         #   sample_club1 = Club(name="Nakuru Sports Club", description="A club for various sports activities.", contact_email="sports@nakuru.com", location="Nakuru CBD", category="Sports")
-          #  sample_club2 = Club(name="Lake Naivasha Birding Society", description="Dedicated to bird watching and conservation around Lake Naivasha.", contact_email="birds@naivasha.org", location="Naivasha", category="Nature")
-           # db.session.add(sample_club1)
-            #db.session.add(sample_club2)
-            #db.session.commit()
-            #print("Initial club data added.")
-        #
     @app.route('/api/register', methods=['POST'])
     def register_user():
         data = request.get_json()
@@ -123,17 +124,10 @@ def create_app(config_name='development'):
     def get_clubs():
         return {"message":"Clubs API endpoint - coming soon!"}, 200
     
-
-   
-
-
-
-
-
-
-
-
+    @app.route('/uploads/<filename>')
+    def uploaded_file(filename):
+        if not allowed_file(filename, app.config):
+            return "file type not allowed", 400
+        return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
     return app
     
-
-

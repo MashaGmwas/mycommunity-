@@ -1,33 +1,32 @@
 import os 
 from flask import Blueprint, jsonify, request, current_app
 from werkzeug.utils import secure_filename
-from extensions import db
-from models.club import Club
+from extensions import db 
+from models.society import Society 
 
-clubs_bp = Blueprint('clubs', __name__)
-createclub_bp = Blueprint('createclub', __name__)
+societies_bp = Blueprint('societies', __name__)
 
 def allowed_file(filename):
     return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']
+           filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS'] 
 
-@clubs_bp.route('/', methods=['GET'])
-def get_all_clubs():
-    #try:
-    clubs = Club.query.all()
-    return jsonify([club.to_dict() for club in clubs]), 200
-    #except Exception as e:
-     #   return jsonify({"error": str(e)}), 500
-
-@clubs_bp.route('/<int:club_id>', methods=['GET'])
-def get_club(club_id):
+@societies_bp.route('/', methods=['GET'])
+def get_all_societies():
     try:
-        club = Club.query.get_or_404(club_id)
-        return jsonify(club.to_dict()), 200
+        societies = Society.query.all()
+        return jsonify([society.to_dict() for society in societies]), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@societies_bp.route('/<int:society_id>', methods=['GET'])
+def get_society(society_id):
+    try:
+        society = Society.query.get_or_404(society_id)
+        return jsonify(society.to_dict()), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 404
 
-@createclub_bp.route('/createclub', methods=['POST'])
+@societies_bp.route('/', methods=['POST'])
 def add_club():
     name = request.form.get('name')
     description = request.form.get('description')
@@ -63,7 +62,7 @@ def add_club():
                             ",".join(current_app.config['ALLOWED_EXTENSIONS'])}), 400
 
     try:
-        new_club = Club(
+        new_society = Society(
             name=name,
             description=description,
             contact_email=contact_email,
@@ -74,23 +73,23 @@ def add_club():
             image_url=image_url    
         )
                 
-        db.session.add(new_club)
+        db.session.add(new_society)
         db.session.commit()
-        return jsonify(new_club.to_dict()), 201
+        return jsonify(new_society.to_dict()), 201
     except Exception as e:
         db.session.rollback()
         if image_url and os.path.exists(os.path.join(current_app.config['UPLOAD_FOLDER'], filename)):
             os.remove(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
         return jsonify({"error": str(e)}), 500
 
-@clubs_bp.route('/<int:club_id>', methods=['DELETE'])
-def delete_club(club_id):
+@societies_bp.route('/<int:society_id>', methods=['DELETE'])
+def delete_club(society_id):
     try:
-        club = db.session.get(Club, club_id)
-        if club is None:
-            return jsonify({"message": "Club not found"}), 404
-        if club.image_url:
-            filename = os.path.basename(club.image_url)
+        society = db.session.get(Society, society_id)
+        if society is None:
+            return jsonify({"message": "Society not found"}), 404
+        if society.image_url:
+            filename = os.path.basename(society.image_url)
             file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
             if os.path.exists(file_path):
                 try:
@@ -99,32 +98,32 @@ def delete_club(club_id):
                 except Exception as e:
                     print(f"Warning: Could not delete image file {file_path}: {e}")
 
-        db.session.delete(club)
+        db.session.delete(society)
         db.session.commit()
         return '', 204
     except Exception as e:
         db.session.rollback()
-        print(f"Error deleting club with ID {club_id}: {e}")
+        print(f"Error deleting society with ID {society_id}: {e}")
         return jsonify({"message": "Internal Server Error"}), 500
 
 
-@clubs_bp.route('/<int:club_id>', methods=['PUT'])
-def update_club(club_id):
+@societies_bp.route('/<int:society_id>', methods=['PUT'])
+def update_society(society_id):
     try:
-        club = db.session.get(Club, club_id)
-        if club is None:
-            return jsonify({"message": "Club not found"}), 404
+        society = db.session.get(Society, society_id)
+        if society is None:
+            return jsonify({"message": "Society not found"}), 404
 
         data = request.get_json()
-        image_url= club.image_url 
+        image_url= society.image_url 
 
         if 'image' in request.files:
             file = request.files['image']
             if file.filename == '':
                 pass
             elif file and allowed_file(file.filename, current_app.config):
-                if club.image_url:
-                    old_filename = os.path.basename(club.iamge_url)
+                if society.image_url:
+                    old_filename = os.path.basename(society.iamge_url)
                     old_file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], old_filename)
                     if os.path.exists(old_file_path):
                         try:
@@ -146,27 +145,27 @@ def update_club(club_id):
        
                                 
        
-        club.name = data.get('name', club.name) 
-        club.description = data.get('description', club.description)
-        club.contact_email = data.get('contact_email', club.contact_email)
-        club.location = data.get('location', club.location)
-        club.category = data.get('category', club.category)
-        club.website = data.get('website', club.website)
-        club.social_media_links = data.get('social_media_links', club.social_media_links)
+        society.name = data.get('name', society.name) 
+        society.description = data.get('description', society.description)
+        society.contact_email = data.get('contact_email', society.contact_email)
+        society.location = data.get('location', society.location)
+        society.category = data.get('category', society.category)
+        society.website = data.get('website', society.website)
+        society.social_media_links = data.get('social_media_links', society.social_media_links)
         
         is_active_str = data.get('is_active')
         if is_active_str is not None:
-            club.is_active = is_active_str.lower() == 'true'
+            society.is_active = is_active_str.lower() == 'true'
         else:
-            club.is_active = club.is_active 
+            society.is_active = society.is_active 
 
-        club.image_url = image_url
+        society.image_url = image_url
        
         db.session.commit()
     
-        return jsonify(club.to_dict()), 200
+        return jsonify(society.to_dict()), 200
 
     except Exception as e:
         db.session.rollback()
-        print(f"Error updating club with ID {club_id}: {e}")
+        print(f"Error updating society with ID {society_id}: {e}")
         return jsonify({"message": "Internal Server Error"}), 500

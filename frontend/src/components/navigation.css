@@ -1,0 +1,122 @@
+/* src/components/Navigation.css (or similar) */
+
+.navigation-container {
+  margin-bottom: 30px; /* More space for a welcoming feel */
+  padding: 20px; /* More padding */
+  background-color: #f7f3e9; /* Warm, light background */
+  border-radius: 15px; /* Softer, rounder corners */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  text-align: center; /* Center the grid */
+  overflow: hidden; /* Important for collage effect and rounded corners */
+}
+
+.navigation-grid {
+  display: grid;
+  /* Adjust grid-template-columns based on how many items you expect and their desired layout */
+  /* For one item, just one column. For more, adjust. */
+  /* Example for 3 items: repeat(auto-fit, minmax(250px, 1fr)); */
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive grid columns */
+  gap: 15px; /* Space between grid items */
+  justify-content: center; /* Center grid items horizontally */
+  align-items: center; /* Center grid items vertically */
+  max-width: 1200px; /* Limit overall width for larger screens */
+  margin: 0 auto; /* Center the grid container itself */
+}
+
+/* For a true collage effect, you might need to manually define grid areas or span rows/columns */
+/* Example for 2 items: */
+/*
+.navigation-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto;
+  gap: 20px;
+}
+.nav-item-link:nth-child(1) { grid-column: span 1; grid-row: span 1; }
+.nav-item-link:nth-child(2) { grid-column: span 1; grid-row: span 1; }
+*/
+/* As you add more items, you can use grid-column: span X and grid-row: span Y to make some items larger */
+/* Example with 3 items, one large, two smaller: */
+/*
+.navigation-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); // Or a more complex setup
+  grid-auto-rows: minmax(150px, auto); // Minimum row height
+  gap: 20px;
+}
+.nav-item-link:nth-child(1) { // The 'Clubs' link
+  grid-column: 1 / span 2; // Spans 2 columns
+  grid-row: 1 / span 2;    // Spans 2 rows (makes it larger)
+}
+.nav-item-link:nth-child(2) { // The 'Events' link
+  grid-column: 3;
+  grid-row: 1;
+}
+.nav-item-link:nth-child(3) { // The 'Members' link
+  grid-column: 3;
+  grid-row: 2;
+}
+*/
+
+
+.nav-item-link {
+  text-decoration: none;
+  display: block; /* Ensures the link takes up the full space */
+  border-radius: 10px; /* Slightly less rounded than container */
+  overflow: hidden; /* Crucial for image corners */
+  position: relative; /* For overlay positioning */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* Subtle shadow for each card */
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.nav-item-link:hover {
+  transform: translateY(-5px); /* Slight lift on hover */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); /* More prominent shadow on hover */
+}
+
+.nav-item-card {
+  width: 100%;
+  height: 250px; /* Moderate size, adjust as needed. Can be `auto` if images have consistent aspect ratios */
+  position: relative;
+  overflow: hidden;
+  display: flex; /* For centering content within the card if needed */
+  justify-content: center;
+  align-items: center;
+}
+
+.nav-item-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Crops image to cover the area without distorting */
+  display: block;
+  transition: transform 0.3s ease-in-out; /* Smooth zoom on hover */
+}
+
+.nav-item-link:hover .nav-item-image {
+  transform: scale(1.05); /* Slight zoom on image on hover */
+}
+
+.nav-item-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 15px 10px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0)); /* Gradient overlay */
+  color: white;
+  text-align: center;
+  font-family: 'Georgia', serif; /* A warmer, more classic font */
+  font-size: 1.4em; /* Larger font for readability */
+  font-weight: bold;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  box-sizing: border-box; /* Include padding in width calculation */
+}
+
+/* Optional: Different sizes for a collage effect */
+/* You'll need to define this dynamically or based on index if you want some links to be larger */
+/* Example if you want the first item to be larger */
+/*
+.nav-item-link:first-child .nav-item-card {
+  height: 350px; // Larger height for the first item
+}
+*/

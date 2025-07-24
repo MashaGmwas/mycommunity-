@@ -1,7 +1,7 @@
 from extensions import db
 from datetime import datetime
 
-class Club(db.Model):
+class Society(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text)
@@ -17,13 +17,13 @@ class Club(db.Model):
 
 
     def __repr__(self):
-        return f'<Club {self.name}>'
-
+        return f'<Society {self.name}>'
+    
     def to_dict(self):
         return {
             'id': self.id,
             'name': self.name,
-            'description': self.description,
+            'description': self.description, 
             'contact_email': self.contact_email,
             'location': self.location,
             'category': self.category,

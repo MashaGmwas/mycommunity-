@@ -4,13 +4,12 @@ import os
 current_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, current_dir)
 
-
 from app import create_app 
 from config import config
-
+from dotenv import load_dotenv
+from app import create_app
 
 config_name = os.environ.get('FLASK_ENV', 'development')
-
 
 app = create_app(config_name)
 

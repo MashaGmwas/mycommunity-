@@ -3,8 +3,16 @@ import { Link } from 'react-router-dom';
 
 function LandingPage() {
   return (
-    <div style={{ textAlign: 'center', padding: '50px', backgroundColor: '#f0f8ff', minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-      <h2>Welcome to Nakuru Community Hub!</h2>
+    <div style={{ 
+      textAlign: 'center', 
+      padding: '50px', 
+      backgroundColor: '#f0f8ff', 
+      minHeight: '100vh', 
+      display: 'flex', 
+      flexDirection: 'column', 
+      justifyContent: 'center', 
+      alignItems: 'center' }}>
+      <h2>Welcome Community Hub!</h2>
       <p>Connect with your local community and discover amazing clubs and events.</p>
       <div style={{ marginTop: '30px' }}>
         <Link to="/auth" style={{ 
