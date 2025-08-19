@@ -8,8 +8,12 @@ import ClubsPage from './pages/Clubspage.jsx';
 import Clubdashboard from './pages/Clubdashboard.jsx';
 import ProtectedRoute from './utils/ProtectedRoute.jsx';
 import { AuthProvider } from './context/Authcontext.jsx';
+import SocietiesPage from './pages/Societiespage.jsx';
+import Societydashboard from './pages/Societydashboard.jsx';
+import CommunityProjects from './pages/cp.jsx';
+import Cpdashboard from './pages/Cpdashboard.jsx';
+import './app.css';
 
-import './app.css'; 
 function App() {
   return (
     <Router>
@@ -18,8 +22,7 @@ function App() {
       <div className="main-content">
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/auth" element={<AuthPage />} />
-          
+          <Route path="/auth" element={<AuthPage />} />      
           
           <Route path="/home" 
           element={
@@ -33,9 +36,16 @@ function App() {
           <ClubsPage />
           </ProtectedRoute>
           } />
+          <Route path="/societies"
+          element={
+            <ProtectedRoute>
+            <SocietiesPage/>
+            </ProtectedRoute>
+          } />
           
           <Route path ="clubs/:id" element={<Clubdashboard />} />
-          
+          <Route path ="societies/:id" element={<Societydashboard />} />
+
           <Route path="*" element={
             <div style={{ textAlign: 'center', padding: '50px' }}>
               <h2>404 - Page Not Found</h2>

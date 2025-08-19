@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './Createclubmodal.css'; 
+import './Createmodal.css'; 
 
 const CreateClubModal = ({ isOpen, onClose, onClubCreated }) => {
     
@@ -41,7 +41,7 @@ const CreateClubModal = ({ isOpen, onClose, onClubCreated }) => {
         }
 
         try {   
-            const response = await fetch('http://localhost:5000/api/club/createclub', {
+            const response = await fetch('http://localhost:5000/api/clubs/createclub', {
                 method: 'POST',
                 body: formData,
             });

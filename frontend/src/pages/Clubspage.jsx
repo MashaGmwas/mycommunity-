@@ -76,12 +76,8 @@ function Clubspage(){
                   key={club.id}
                   className={`club-card ${expandedClubId === club.id ? 'expanded' : ''}`}
                   onClick={() => toggleExpand(club.id)}
-                >
-                  <img
-                    src={club.image_url || 'https://via.placeholder.com/250x150?text=Club+Image'}
-                    alt={club.name}
-                    className="club-image"
-                  />
+                  style={{ backgroundImage: `url(${club.image_url || 'https://via.placeholder.com/250x150?text=Club+Image'})`}}
+                >                  
                   <h3 className="club-name">{club.name}</h3>
                   {expandedClubId === club.id && (
                     <div className="club-details">

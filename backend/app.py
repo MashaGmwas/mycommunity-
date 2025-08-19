@@ -1,5 +1,4 @@
-
-from flask import Flask, Blueprint, jsonify , request 
+from flask import Flask, Blueprint, jsonify , request , send_from_directory
 import os
 from dotenv import load_dotenv
 from config import DevelopmentConfig, TestingConfig, ProductionConfig
@@ -16,6 +15,8 @@ from Routes.societies import societies_bp
 from models.society import Society 
 from flask_migrate import Migrate
 
+migrate = Migrate() 
+
 CONFIG_MAP = {
     'development': DevelopmentConfig,
     'testing': TestingConfig,
@@ -25,6 +26,8 @@ def allowed_file(filename, app_config):
     return '.' in filename and \
          filename.rsplit('.', 1)[1].lower()in app_config['ALLOWED_EXTENSIONS']
 
+os.environ['FLASK_APP'] = 'app'
+
 def create_app(config_name='development'):
     app = Flask(__name__)
     load_dotenv() 
@@ -33,7 +36,7 @@ def create_app(config_name='development'):
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-    app.config['ALLOWED_EXTENSIONS'] = {'PNG','JPG','jpeg','gif'}
+    app.config['ALLOWED_EXTENSIONS'] = {'png','jpg','jpeg','gif'}
      
     config_class = CONFIG_MAP.get(config_name, DevelopmentConfig)
     app.config.from_object(config_class)
@@ -43,8 +46,7 @@ def create_app(config_name='development'):
 
     app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', 'a-very-strong-and-secret-fallback-key')
     
-    migrate = Migrate(app, db)
-
+    
     if not os.path.exists(app.config['UPLOAD_FOLDER']):
         os.makedirs(app.config['UPLOAD_FOLDER'])
 
@@ -52,7 +54,8 @@ def create_app(config_name='development'):
     db.init_app(app)
     bcrypt.init_app(app)
     login_manager.init_app(app)
-    
+    migrate.init_app(app, db)
+
     jwt = JWTManager(app)
     
     CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
@@ -60,11 +63,11 @@ def create_app(config_name='development'):
     from Routes.clubs import clubs_bp
     app.register_blueprint(clubs_bp, url_prefix='/api/clubs')
     
-    from Routes.clubs import createclub_bp
-    app.register_blueprint(createclub_bp, url_prefix='/api/clubs/createclub')
-
     from Routes.societies import societies_bp
     app.register_blueprint( societies_bp, url_prefix='/api/societies')
+
+    from Routes.cp import projects_bp
+    app.register_blueprint( projects_bp, url_prefix='/api/projects')
 
     
     @app.route('/api/register', methods=['POST'])
@@ -131,3 +134,4 @@ def create_app(config_name='development'):
         return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
     return app
     
+app = create_app(os.environ.get('FLASK_CONFIG', 'development'))

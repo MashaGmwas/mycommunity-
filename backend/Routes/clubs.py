@@ -5,11 +5,11 @@ from extensions import db
 from models.club import Club
 
 clubs_bp = Blueprint('clubs', __name__)
-createclub_bp = Blueprint('createclub', __name__)
 
-def allowed_file(filename):
+def allowed_file(filename, app_config):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']
+
 
 @clubs_bp.route('/', methods=['GET'])
 def get_all_clubs():
@@ -27,15 +27,15 @@ def get_club(club_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 404
 
-@createclub_bp.route('/createclub', methods=['POST'])
+   
+@clubs_bp.route('/createclub', methods=['POST'])
 def add_club():
     name = request.form.get('name')
     description = request.form.get('description')
 
-    if not name or not description:
+    if not name or not description:     
         return jsonify({"error": "Name and description are required"}), 400
-    name= request.form.get('name')
-    description= request.form.get('description')
+    
     contact_email= request.form.get('contact_email')
     location= request.form.get('location')
     category= request.form.get('category')
@@ -43,7 +43,6 @@ def add_club():
     social_media_links= request.form.get('social_media_links')
 
     filename = None
-    imageFile = None 
     image_url = None
    
     if 'image' in request.files:
@@ -55,7 +54,7 @@ def add_club():
             file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
             try:
                 file.save(file_path)
-                image_url =f"/uploads/{filename}"
+                image_url =f"http://localhost:5000/uploads/{filename}"
             except Exception as e:
                 return jsonify({"error": f"Failed to save image: {str(e)}"}), 500
         else:
@@ -124,7 +123,7 @@ def update_club(club_id):
                 pass
             elif file and allowed_file(file.filename, current_app.config):
                 if club.image_url:
-                    old_filename = os.path.basename(club.iamge_url)
+                    old_filename = os.path.basename(club.image_url)
                     old_file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], old_filename)
                     if os.path.exists(old_file_path):
                         try:

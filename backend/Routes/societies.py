@@ -6,17 +6,18 @@ from models.society import Society
 
 societies_bp = Blueprint('societies', __name__)
 
-def allowed_file(filename):
+def allowed_file(filename, app_config):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS'] 
 
 @societies_bp.route('/', methods=['GET'])
 def get_all_societies():
+    print("Received GET request for all societies.")
     try:
         societies = Society.query.all()
         return jsonify([society.to_dict() for society in societies]), 200
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+       return jsonify({"error": str(e)}), 500
 
 @societies_bp.route('/<int:society_id>', methods=['GET'])
 def get_society(society_id):
@@ -26,23 +27,21 @@ def get_society(society_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 404
 
-@societies_bp.route('/', methods=['POST'])
-def add_club():
+@societies_bp.route('/createsociety', methods=['POST'])
+def add_society():
     name = request.form.get('name')
     description = request.form.get('description')
 
     if not name or not description:
         return jsonify({"error": "Name and description are required"}), 400
-    name= request.form.get('name')
-    description= request.form.get('description')
+   
     contact_email= request.form.get('contact_email')
     location= request.form.get('location')
     category= request.form.get('category')
     website= request.form.get('website')
     social_media_links= request.form.get('social_media_links')
 
-    filename = None
-    imageFile = None 
+    filename = None 
     image_url = None
    
     if 'image' in request.files:
@@ -54,7 +53,7 @@ def add_club():
             file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
             try:
                 file.save(file_path)
-                image_url =f"/uploads/{filename}"
+                image_url =f"http://localhost:5000/uploads/{filename}"
             except Exception as e:
                 return jsonify({"error": f"Failed to save image: {str(e)}"}), 500
         else:
@@ -83,7 +82,7 @@ def add_club():
         return jsonify({"error": str(e)}), 500
 
 @societies_bp.route('/<int:society_id>', methods=['DELETE'])
-def delete_club(society_id):
+def delete_society(society_id):
     try:
         society = db.session.get(Society, society_id)
         if society is None:

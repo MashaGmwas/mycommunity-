@@ -1,4 +1,3 @@
-
 import os
 
 class BaseConfig:
@@ -31,4 +30,3 @@ class TestingConfig(BaseConfig):
 class ProductionConfig(BaseConfig):
     DEBUG = False
     TESTING = False
-    
