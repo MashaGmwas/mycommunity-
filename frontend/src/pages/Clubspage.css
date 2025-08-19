@@ -93,18 +93,20 @@ h2 {
     margin: 0 0 10px 0;
     border-color: #ffffff;
     border-width: 5px;
-    color: #f30e0e;
-    font-size: 1.3em;
+    color: #ffffff;
+    font-size: 1.4em;
+    text-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
 }
 
 .club-details p {
     margin: 0 0 8px 0;
-    color: #666;
-    font-size: 0.9em;
+    color: #ffffff;
+    font-size: 1.4em;
+    text-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
 }
 
 .club-details strong {
-    color: #444;
+    color: #ffffff;
 }
 
 

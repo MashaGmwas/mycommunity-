@@ -10,6 +10,8 @@ import ProtectedRoute from './utils/ProtectedRoute.jsx';
 import { AuthProvider } from './context/Authcontext.jsx';
 import SocietiesPage from './pages/Societiespage.jsx';
 import Societydashboard from './pages/Societydashboard.jsx';
+import CommunityProjects from './pages/cp.jsx';
+import Cpdashboard from './pages/Cpdashboard.jsx';
 import './app.css';
 
 function App() {

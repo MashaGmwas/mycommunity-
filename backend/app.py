@@ -1,4 +1,3 @@
-
 from flask import Flask, Blueprint, jsonify , request , send_from_directory
 import os
 from dotenv import load_dotenv
@@ -15,6 +14,8 @@ from models.user import User
 from Routes.societies import societies_bp
 from models.society import Society 
 from flask_migrate import Migrate
+
+migrate = Migrate() 
 
 CONFIG_MAP = {
     'development': DevelopmentConfig,
@@ -45,8 +46,7 @@ def create_app(config_name='development'):
 
     app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', 'a-very-strong-and-secret-fallback-key')
     
-    migrate = Migrate(app, db)
-
+    
     if not os.path.exists(app.config['UPLOAD_FOLDER']):
         os.makedirs(app.config['UPLOAD_FOLDER'])
 
@@ -54,7 +54,8 @@ def create_app(config_name='development'):
     db.init_app(app)
     bcrypt.init_app(app)
     login_manager.init_app(app)
-    
+    migrate.init_app(app, db)
+
     jwt = JWTManager(app)
     
     CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
@@ -64,6 +65,9 @@ def create_app(config_name='development'):
     
     from Routes.societies import societies_bp
     app.register_blueprint( societies_bp, url_prefix='/api/societies')
+
+    from Routes.cp import projects_bp
+    app.register_blueprint( projects_bp, url_prefix='/api/projects')
 
     
     @app.route('/api/register', methods=['POST'])
@@ -130,3 +134,4 @@ def create_app(config_name='development'):
         return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
     return app
     
+app = create_app(os.environ.get('FLASK_CONFIG', 'development'))
