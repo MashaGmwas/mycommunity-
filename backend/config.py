@@ -5,7 +5,7 @@ class BaseConfig:
     DEBUG = False
     TESTING = False
     SECRET_KEY = 'y0929051acfeecbce5b1292a33dff6e' 
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///site.db' 
+    SQLALCHEMY_DATABASE_URI ='mysql+pymysql://root:gm69766976@localhost3306/mycommunity'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024
