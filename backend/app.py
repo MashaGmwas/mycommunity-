@@ -1,5 +1,5 @@
 
-from flask import Flask, Blueprint, jsonify , request 
+from flask import Flask, Blueprint, jsonify , request , send_from_directory
 import os
 from dotenv import load_dotenv
 from config import DevelopmentConfig, TestingConfig, ProductionConfig
@@ -25,6 +25,8 @@ def allowed_file(filename, app_config):
     return '.' in filename and \
          filename.rsplit('.', 1)[1].lower()in app_config['ALLOWED_EXTENSIONS']
 
+os.environ['FLASK_APP'] = 'app'
+
 def create_app(config_name='development'):
     app = Flask(__name__)
     load_dotenv() 
@@ -33,7 +35,7 @@ def create_app(config_name='development'):
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-    app.config['ALLOWED_EXTENSIONS'] = {'PNG','JPG','jpeg','gif'}
+    app.config['ALLOWED_EXTENSIONS'] = {'png','jpg','jpeg','gif'}
      
     config_class = CONFIG_MAP.get(config_name, DevelopmentConfig)
     app.config.from_object(config_class)
@@ -60,9 +62,6 @@ def create_app(config_name='development'):
     from Routes.clubs import clubs_bp
     app.register_blueprint(clubs_bp, url_prefix='/api/clubs')
     
-    from Routes.clubs import createclub_bp
-    app.register_blueprint(createclub_bp, url_prefix='/api/clubs/createclub')
-
     from Routes.societies import societies_bp
     app.register_blueprint( societies_bp, url_prefix='/api/societies')
 
